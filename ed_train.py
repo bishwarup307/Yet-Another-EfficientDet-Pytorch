@@ -393,16 +393,18 @@ def train(opt):
                 override_prev_results = True
                 project_name = opt.project
                 confidence = 0.05
-                eval_valid(opt.data_path,
-                          opt.compound_coef,
-                          model,
-                          nms_threshold,
-                          use_cuda,
-                          use_float16,
-                          override_prev_results,
-                          project_name,
-                          confidence)
+                map50_90,map50 = eval_valid(opt.data_path,
+                            opt.compound_coef,
+                            model,
+                            nms_threshold,
+                            use_cuda,
+                            use_float16,
+                            override_prev_results,
+                            project_name,
+                            confidence)
 
+                writer.add_scalars("metrics/mAP_0.5:0.95",map50_90,epoch)
+                writer.add_scalars("metrics/mAP_0.5",map50,epoch)
 
                 if loss + opt.es_min_delta < best_loss:
                     best_loss = loss

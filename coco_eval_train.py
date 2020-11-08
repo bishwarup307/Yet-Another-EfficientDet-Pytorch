@@ -127,6 +127,8 @@ def _eval(coco_gt, image_ids, pred_json_path):
     coco_eval.evaluate()
     coco_eval.accumulate()
     coco_eval.summarize()
+    map50_90, map50 = cocoEval.stats[:2]
+    return map50_90,map50
 
 
 def eval_valid(data_path,compound_coef,model,nms_threshold,use_cuda,use_float16,override_prev_results,project_name,confidence=0.05):
@@ -154,7 +156,10 @@ def eval_valid(data_path,compound_coef,model,nms_threshold,use_cuda,use_float16,
     if override_prev_results or not os.path.exists(VAL_PRED):
         is_pred_ok = evaluate_coco(VAL_IMGS, SET_NAME, image_ids, coco_gt, model,VAL_PRED)
 
+    map50_90,map50 = 0.0,0.0
     if is_pred_ok:
-        _eval(coco_gt, image_ids, VAL_PRED)
+        map50_90,map50 = _eval(coco_gt, image_ids, VAL_PRED)
     else:
         print("NO VALID DETECTIONS FOUND.")
+    
+    return map50_90,map50 
